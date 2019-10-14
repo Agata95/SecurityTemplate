@@ -12,12 +12,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
     private AuthenticationService authenticationService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public SecurityConfig(AuthenticationService authenticationService, PasswordEncoder passwordEncoder) {
+        this.authenticationService = authenticationService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public SecurityConfig(boolean disableDefaults, AuthenticationService authenticationService, PasswordEncoder passwordEncoder) {
+        super(disableDefaults);
+        this.authenticationService = authenticationService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -25,18 +33,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        do tej pory wszystko było dla klienta
 //        teraz tylko po podanych url wszyscy mają dostęp
         http.csrf().disable()
+//                rozpoczynamy definicję reguł bezpieczeństwa:
                 .authorizeRequests()
                 .antMatchers("/",
                         "/css/**",
                         "/js/**",
                         "/webjars/**",
+                        "/user/register",
                         "/login").permitAll()
+//                reguły związane z rolami (np. /admin/**)
                 .anyRequest().authenticated()
 //        .anyRequest().authenticated() oznacza, że dla każdej innej strony ma pytać o login i hasło
                 .and()
                     .formLogin()
                         .loginPage("/login")
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 .and()
                     .logout()

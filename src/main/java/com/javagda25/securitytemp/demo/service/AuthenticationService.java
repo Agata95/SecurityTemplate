@@ -23,6 +23,7 @@ public class AuthenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Account> optionalAccount = accountRepository.findByUsername(username);
         if (optionalAccount.isPresent()) {
+//            encja bazodanowa:
             Account account = optionalAccount.get();
             return User.builder()
                     .username(account.getUsername())
@@ -32,6 +33,6 @@ public class AuthenticationService implements UserDetailsService {
 
         }
 
-        throw new UsernameNotFoundException("Username not found");
+        throw new UsernameNotFoundException("Username not found.");
     }
 }

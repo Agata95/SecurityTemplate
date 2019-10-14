@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 //    Spring sam napisze metodę findByUsername
     Optional<Account> findByUsername(String username);
+
+    boolean existsByUsername(String username);
 }
