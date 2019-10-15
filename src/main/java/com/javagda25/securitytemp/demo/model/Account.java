@@ -29,9 +29,16 @@ public class Account {
     @Size(min = 4)
     private String password;
 
-//    każda rola może być przypisana do każdej ilości użytkowników
+    //    każda rola może być przypisana do każdej ilości użytkowników
 //    Cascade ma odłączyć role, a nie ją usunąć
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @Cascade(value = org.hibernate.annotations.CascadeType.DETACH)
     private Set<AccountRole> accountRoles;
+
+    private boolean locked;
+
+    public boolean isAdmin() {
+        return accountRoles.stream()
+                .anyMatch(accountRole -> accountRole.getName().equals("ADMIN"));
+    }
 }

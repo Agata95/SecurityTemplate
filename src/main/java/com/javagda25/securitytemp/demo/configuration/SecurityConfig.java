@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationService authenticationService;
     private PasswordEncoder passwordEncoder;
@@ -45,16 +46,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
 //        .anyRequest().authenticated() oznacza, że dla każdej innej strony ma pytać o login i hasło
                 .and()
-                    .formLogin()
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll()
+                .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .permitAll()
                 .and()
-                    .logout()
-                        .logoutUrl("/logout")
-                        .clearAuthentication(true)
-                        .invalidateHttpSession(true)
-                        .permitAll();
+                .logout()
+                .logoutUrl("/logout")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .permitAll();
     }
 
     @Override
