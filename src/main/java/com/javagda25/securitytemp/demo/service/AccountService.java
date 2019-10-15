@@ -1,26 +1,30 @@
 package com.javagda25.securitytemp.demo.service;
 
 import com.javagda25.securitytemp.demo.model.Account;
+import com.javagda25.securitytemp.demo.model.AccountRole;
 import com.javagda25.securitytemp.demo.model.dto.AccountPasswordResetRequest;
 import com.javagda25.securitytemp.demo.repository.AccountRepository;
+import com.javagda25.securitytemp.demo.repository.AccountRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Service
 public class AccountService {
     private AccountRepository accountRepository;
     private PasswordEncoder passwordEncoder;
     private AccountRoleService accountRoleService;
+    private AccountRoleRepository accountRoleRepository;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder, AccountRoleService accountRoleService) {
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder, AccountRoleService accountRoleService, AccountRoleRepository accountRoleRepository) {
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
         this.accountRoleService = accountRoleService;
+        this.accountRoleRepository = accountRoleRepository;
     }
 
     public boolean register(Account account) {
@@ -74,5 +78,27 @@ public class AccountService {
 
             accountRepository.save(account);
         }
+    }
+
+    public void editRoles(Long accoutId, HttpServletRequest request) {
+        if (accountRepository.existsById(accoutId)) {
+            Account account = accountRepository.getOne(accoutId);
+
+            Map<String, String[]> formParameters = request.getParameterMap();
+            Set<AccountRole> newCollectionOfRoles = new HashSet<>();
+
+            for (String roleName : formParameters.keySet()) {
+                String[] values = formParameters.get(roleName);
+
+                if (values[0].equals("on")) {
+                    accountRoleRepository.findByName(roleName).ifPresent(newCollectionOfRoles::add);
+                }
+            }
+
+            account.setAccountRoles(newCollectionOfRoles);
+
+            accountRepository.save(account);
+        }
+
     }
 }
