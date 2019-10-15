@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -27,6 +26,12 @@ public class Account {
     private String username;
 
     @NotEmpty
-    @Size(min = 4, max = 10)
+    @Size(min = 4)
     private String password;
+
+//    każda rola może być przypisana do każdej ilości użytkowników
+//    Cascade ma odłączyć role, a nie ją usunąć
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @Cascade(value = org.hibernate.annotations.CascadeType.DETACH)
+    private Set<AccountRole> accountRoles;
 }

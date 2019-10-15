@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 public class AccountService {
     private AccountRepository accountRepository;
     private PasswordEncoder passwordEncoder;
+    private AccountRoleService accountRoleService;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder, AccountRoleService accountRoleService) {
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
+        this.accountRoleService = accountRoleService;
     }
 
     public boolean register(Account account) {
@@ -23,6 +25,7 @@ public class AccountService {
         }
 //        szyfrowanie hasła:
         account.setPassword(passwordEncoder.encode(account.getPassword()));
+        account.setAccountRoles(accountRoleService.getDefaultRoles());
 
 //        zapis do bazy:
         accountRepository.save(account);
