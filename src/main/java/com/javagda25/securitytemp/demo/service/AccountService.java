@@ -84,6 +84,15 @@ public class AccountService {
         if (accountRepository.existsById(accoutId)) {
             Account account = accountRepository.getOne(accoutId);
 
+//            field - działasz na obiekcie, określamy na jakim obiekcie działamy th:object, a
+//            field korzysta z gwiazdki (w obiekcie w którym działasz) *{...}
+//            name - gdy nie działamy na obiektach (nic sztywnego do przesłania)
+//            parametr jest przekazywany pod tą nazwą, nie ma modelu ani th:object, dlatego przekazuje
+//            się po nazwie, gdy nie mamy th:object przekazujemy po nazwie
+//            $ gdy uzywa się parametr, przekazany w atrybucie w mappingu,
+//            @ gdy podajemy adres
+
+//            kluczem w form parameters jest nazwa parametru th:name
             Map<String, String[]> formParameters = request.getParameterMap();
             Set<AccountRole> newCollectionOfRoles = new HashSet<>();
 
@@ -91,7 +100,11 @@ public class AccountService {
                 String[] values = formParameters.get(roleName);
 
                 if (values[0].equals("on")) {
-                    accountRoleRepository.findByName(roleName).ifPresent(newCollectionOfRoles::add);
+                    Optional<AccountRole> accountRoleOptional = accountRoleRepository.findByName(roleName);
+
+                    if (accountRoleOptional.isPresent()) {
+                        newCollectionOfRoles.add(accountRoleOptional.get());
+                    }
                 }
             }
 

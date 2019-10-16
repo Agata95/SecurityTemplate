@@ -88,8 +88,8 @@ public class AdminAccountController {
     }
 
     @PostMapping("/editRoles")
-    public String editRoles(Long accoutId, HttpServletRequest request) {
-
+    public String editRoles(Long accountId, HttpServletRequest request) {
+        accountService.editRoles(accountId, request);
 
         return "redirect:/admin/account/list";
     }
