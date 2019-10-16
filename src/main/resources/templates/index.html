@@ -8,7 +8,8 @@
 <body>
 <th:block th:replace="fragments :: navigator" th:remove="tag"/>
 <div class="container">
-    <h1>Hello My App!</h1>
+    <h1 th:if="${user == null}">Hello My App!</h1>
+    <h1 th:if="${user != null}">Hello <span th:text="${user}"></span> </h1>
 </div>
 <th:block th:replace="fragments :: footer" th:remove="tag"/>
 <th:block th:replace="fragments :: scripts" th:remove="tag"/>

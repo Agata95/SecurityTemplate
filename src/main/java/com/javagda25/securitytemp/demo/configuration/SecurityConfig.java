@@ -22,12 +22,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public SecurityConfig(boolean disableDefaults, AuthenticationService authenticationService, PasswordEncoder passwordEncoder) {
-        super(disableDefaults);
-        this.authenticationService = authenticationService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        zmodyfikowana reguła bezpieczeństwa
@@ -40,22 +34,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/css/**",
                         "/js/**",
                         "/webjars/**",
-                        "/user/register",
                         "/login").permitAll()
 //                reguły związane z rolami (np. /admin/**)
                 .anyRequest().authenticated()
+//                aby wejść na ten URL("/user/register") trzeba mieć rolę admina:
+                .antMatchers("/user/register").hasAnyRole("ADMIN")
 //        .anyRequest().authenticated() oznacza, że dla każdej innej strony ma pytać o login i hasło
                 .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-                .permitAll()
+                    .formLogin()
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll()
                 .and()
-                .logout()
-                .logoutUrl("/logout")
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .permitAll();
+                    .logout()
+                        .logoutUrl("/logout")
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .permitAll();
     }
 
     @Override

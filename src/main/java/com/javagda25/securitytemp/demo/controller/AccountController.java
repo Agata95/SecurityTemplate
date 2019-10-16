@@ -3,6 +3,7 @@ package com.javagda25.securitytemp.demo.controller;
 import com.javagda25.securitytemp.demo.model.Account;
 import com.javagda25.securitytemp.demo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -25,6 +26,7 @@ public class AccountController {
     }
 
     @GetMapping("/register")
+    @PreAuthorize(value = "hasRole('ADMIN')")
     public String registrationForm(Model model, Account account) {
         model.addAttribute("newAccount", account);
 
@@ -32,6 +34,7 @@ public class AccountController {
     }
 
     @PostMapping("/register")
+    @PreAuthorize(value = "hasRole('ADMIN')")
 //    po @Valid musi być BindingResult
     public String register(@Valid Account account,
                            BindingResult result,
